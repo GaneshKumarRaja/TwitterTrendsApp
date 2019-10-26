@@ -24,8 +24,6 @@ import androidx.test.rule.ActivityTestRule
 import com.ganesh.twitterapp.data.model.Trends
 
 
-
-
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -39,16 +37,12 @@ import com.ganesh.twitterapp.data.model.Trends
 class ExampleInstrumentedTest {
 
 
-
     @get:Rule
     var activityRule: ActivityTestRule<MainActivity> =
         ActivityTestRule(MainActivity::class.java)
 
 
-
-
     lateinit var activity: MainActivity
-
 
 
     @Before
@@ -56,51 +50,6 @@ class ExampleInstrumentedTest {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val app = instrumentation.targetContext.applicationContext as TwitterApplication
     }
-
-    @Test
-    fun one() {
-
-
-        val x = mutableListOf(Trends("", "", "", "", 0))
-
-
-
-        activity = activityRule.activity
-
-
-                activity.trendsAdapter.setData(x)
-                activity.trendsAdapter.notifyDataSetChanged()
-                onView(withId(R.id.recyclerView))
-                    .check(matches(atPosition(0, hasDescendant(withText("")))));
-
-
-
-
-
-    }
-
-
-    fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> {
-        checkNotNull(itemMatcher)
-        return object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
-            override fun describeTo(description: Description) {
-                description.appendText("has item at position $position: ")
-                itemMatcher.describeTo(description)
-            }
-
-            override fun matchesSafely(view: RecyclerView): Boolean {
-                val viewHolder = view.findViewHolderForAdapterPosition(position)
-                    ?: // has no item on such position
-                    return false
-                return itemMatcher.matches(viewHolder.itemView)
-            }
-        }
-    }
-
-
-
-
-
 
 
 }

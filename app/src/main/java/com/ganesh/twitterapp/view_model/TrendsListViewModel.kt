@@ -162,12 +162,11 @@ open class TrendsListViewModel @Inject constructor() :
 
 
     // initilize  location service and authenticate service one by one
-    open fun initService(): Boolean {
+     fun initService(): Boolean {
 
         // find both location and authenticated
         if (hasLocationFetched() && hasAuthenticated()) {
             placeLiveData.value = placeLiveData.value
-
             return false
         }
 
@@ -182,11 +181,7 @@ open class TrendsListViewModel @Inject constructor() :
             return false
         }
 
-
-        // fecthLocation()
-
         return true
-
     }
 
     // get user current location
