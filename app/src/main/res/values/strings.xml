@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">TwitterApp</string>
+
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+
+    <string name="search">Search</string>
+    <string name="go">Go</string>
+
+
+    <!--SheredPref Keys-->
+    <string name="sheredpref_file_name"></string>
+
+    <!--GPS info-->
+    <string name="gps_message">Gps is disabled,in order to use the application properly you need to enable GPS of your device</string>
+    <string name="enable_gps">Enable GPS</string>
+    <string name="gps_title">GPS Disabled</string>
+
+
+    <!--Progress Bar message-->
+    <string name="authenticating">authenticating</string>
+
+    <!--error messaage-->
+    <string name="session_expired">session expired login again</string>
+    <string name="errro_code_401">401</string>
+
+    <string name="inter_connection">No Internet Connection</string>
+
+    <string name="unknown_error">Unknown Erorr</string>
+
+    <string name="token_key">token</string>
+</resources>
+
+

@@ -1,0 +1,151 @@
+package com.ganesh.twitterapp
+
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ganesh.twitterapp.adapter.TrendsAdapter
+import com.ganesh.twitterapp.data.model.Trends
+import com.ganesh.twitterapp.di.module.ActivityModule
+import com.ganesh.twitterapp.util.EnableGPS
+import com.ganesh.twitterapp.view_model.TrendsListViewModel
+import com.ganesh.twitterapp.di.DaggerViewModelFactory
+import com.ganesh.twitterapp.di.component.DaggerAppComponent
+import com.ganesh.twitterapp.di.module.AppModule
+
+import com.ganesh.twitterapp.di.module.NetworkDIModule
+import kotlinx.android.synthetic.main.activity_main.*
+
+import javax.inject.Inject
+
+class MainActivity : AppCompatActivity() {
+
+
+    @Inject
+    lateinit var gpsEnableView: EnableGPS
+
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
+
+    @Inject
+    lateinit var viewModel: TrendsListViewModel
+
+    @Inject
+    lateinit var trendsAdapter: TrendsAdapter
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        initDagger()
+        initRecycreView()
+        initViewModel()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        setGpsEnableView()
+    }
+
+    private fun initViewModel() {
+        observableViewModel()
+    }
+
+    private fun initDagger() {
+        DaggerAppComponent.builder()
+            .appModule(AppModule(application))
+            .activityModule(ActivityModule(this))
+            .networkDIModule(NetworkDIModule())
+            .build().inject(this)
+    }
+
+
+    private fun initRecycreView() {
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = trendsAdapter
+    }
+
+
+    private fun setDataToRecuclerView(data: List<Trends>) {
+        trendsAdapter.setData(data)
+        trendsAdapter.notifyDataSetChanged()
+    }
+
+
+    private fun observableViewModel() {
+
+        viewModel.canShowLoading.observe(this, Observer {
+
+            progress_circular.visibility = View.VISIBLE
+
+            if (!it) {
+                progress_circular.visibility = View.GONE
+            }
+
+        })
+
+        viewModel.errorMessage.observe(this, Observer {
+            setDataToRecuclerView(emptyList())
+            txt_error.text = it
+        })
+
+
+        viewModel.locationLiveData.observe(this, Observer {
+
+            if (viewModel.hasAuthenticated()) {
+                callPlaceDetailsWebservice()
+            } else {
+                viewModel.doAuthendicate(BuildConfig.API_KEY)
+            }
+
+        })
+
+        viewModel.trendsLiveData.observe(this, Observer {
+            setDataToRecuclerView(it)
+        })
+
+
+        viewModel.placeLiveData.observe(this, Observer {
+            viewModel.getTrendsData(viewModel.getTocken(), "" + it.woeid)
+        })
+
+
+        viewModel.authenticationData.observe(this, Observer {
+            viewModel.setToken(it)
+            callPlaceDetailsWebservice()
+        })
+
+    }
+
+    private fun callPlaceDetailsWebservice() {
+        viewModel.getPlaceDetails(
+            viewModel.getTocken(),
+            "" + viewModel.locationLiveData.value!!.latitude,
+            "" + viewModel.locationLiveData.value!!.longitude
+        )
+    }
+
+
+    fun setGpsEnableView() {
+        // verify user has enabled GPS permission in app setting
+        if (gpsEnableView.hasGPSPermission()) {
+
+            // GPS is turned on
+            if (gpsEnableView.isEnabledGPS()) {
+                initAllService()
+            }
+        }
+    }
+
+
+    fun initAllService() {
+        viewModel.initService()
+    }
+
+
+}
+
