@@ -1,6 +1,7 @@
 package com.ganesh.twitterapp.di.module
 
 import android.app.Application
+import com.ganesh.twitterapp.R
 import com.ganesh.twitterapp.util.ConnectivityVerifier
 import com.ganesh.twitterapp.util.SheredPref
 import com.google.android.gms.location.LocationRequest
@@ -32,15 +33,22 @@ class AppModule constructor(var app: Application) {
 
     @Singleton
     @Provides
-     fun getConnectivityChecker(): ConnectivityVerifier {
+    fun getConnectivityChecker(): ConnectivityVerifier {
 
         return ConnectivityVerifier(app.applicationContext)
     }
 
     @Singleton
     @Provides
-     fun provideSharedPref(): SheredPref {
-        return SheredPref(app.applicationContext, "TwitterApp")
+    fun provideSharedPref(): SheredPref {
+
+        val pref = app.applicationContext.getApplicationContext().getSharedPreferences(
+            "TwitterApp", 0
+        )
+
+        val editor = pref.edit()
+
+        return SheredPref(pref, editor)
     }
 
 }

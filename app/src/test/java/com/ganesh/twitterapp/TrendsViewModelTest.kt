@@ -15,10 +15,11 @@ import com.ganesh.twitterapp.data.repo.AppApiHelper
 import io.reactivex.internal.schedulers.ExecutorScheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.Scheduler
+import org.junit.runner.RunWith
 import java.util.concurrent.Executor
 import org.mockito.Mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.TimeUnit
-
 
 
 
@@ -86,7 +87,7 @@ class TrendsViewModelTest {
 
 
     @Test
-    fun  `success case for fetching trending details web service calling`() {
+    fun `success case for fetching trending details web service calling`() {
 
         val x = mutableListOf(Trends("", "", "", "", 0))
 
@@ -155,7 +156,7 @@ class TrendsViewModelTest {
 
 
     @Test
-    fun  `failure case for fetching place details web service calling`() {
+    fun `failure case for fetching place details web service calling`() {
 
         val eror = Throwable("Unknown error")
 

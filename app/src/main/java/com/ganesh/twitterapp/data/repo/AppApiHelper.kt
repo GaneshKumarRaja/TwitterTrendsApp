@@ -12,8 +12,7 @@ import javax.inject.Inject
 
 open class AppApiHelper @Inject constructor(
     var api: APIInterface
-
-    ) : APIHelper {
+) : APIHelper {
 
 
     override fun getTrends(oauthToken: String, id: String): Single<List<TrendsOuterResponseModel>> {
@@ -36,7 +35,7 @@ open class AppApiHelper @Inject constructor(
     }
 
 
-    override fun doAuthendicate(token:String): Single<AuthendicateModel> {
+    override fun doAuthendicate(token: String): Single<AuthendicateModel> {
         return api.doQuthendicate(token)
     }
 

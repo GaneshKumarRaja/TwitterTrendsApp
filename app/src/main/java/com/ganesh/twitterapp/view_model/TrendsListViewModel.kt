@@ -162,7 +162,7 @@ open class TrendsListViewModel @Inject constructor() :
 
 
     // initilize  location service and authenticate service one by one
-     fun initService(): Boolean {
+    fun initService(): Boolean {
 
         // find both location and authenticated
         if (hasLocationFetched() && hasAuthenticated()) {
@@ -208,14 +208,14 @@ open class TrendsListViewModel @Inject constructor() :
 
     fun hasAuthenticated(): Boolean {
 
-        if (sheredPref.getString(context.getString(R.string.token_key)).isNotEmpty()) {
+        if (sheredPref.getString(context.getString(R.string.token_key))!!.isNotEmpty()) {
             return true
         }
 
         return false
     }
 
-    fun getTocken(): String {
+    fun getTocken(): String? {
         return sheredPref.getString(context.getString(R.string.token_key))
     }
 

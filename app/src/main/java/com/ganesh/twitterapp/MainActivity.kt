@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel.placeLiveData.observe(this, Observer {
-            viewModel.getTrendsData(viewModel.getTocken(), "" + it.woeid)
+            viewModel.getTrendsData(viewModel.getTocken()!!, "" + it.woeid)
         })
 
 
@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun callPlaceDetailsWebservice() {
         viewModel.getPlaceDetails(
-            viewModel.getTocken(),
+            viewModel.getTocken()!!,
             "" + viewModel.locationLiveData.value!!.latitude,
             "" + viewModel.locationLiveData.value!!.longitude
         )

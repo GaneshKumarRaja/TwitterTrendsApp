@@ -3,6 +3,7 @@ package com.ganesh.twitterapp
 import androidx.lifecycle.MutableLiveData
 import com.ganesh.twitterapp.util.EnableGPS
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -56,13 +57,13 @@ class ActivityTest {
     fun `location and authenticaion once done, it should not invoke fectchlocation and doAuthenticate method`() {
 
         `when`(viewModel.hasLocationFetched()).thenReturn(true)
+
         `when`(viewModel.hasAuthenticated()).thenReturn(true)
 
-        viewModel.placeLiveData = MutableLiveData()
 
         main.initAllService()
 
-        verify(viewModel, times(0)).fecthLocation()
+        verify(viewModel, times(0)).doAuthendicate("")
 
     }
 
