@@ -4,6 +4,7 @@ package com.ganesh.twitterapp.view_model
 import android.content.Context
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
+import com.ganesh.twitterapp.BuildConfig
 import com.ganesh.twitterapp.R
 import com.ganesh.twitterapp.data.model.AuthendicateModel
 import com.ganesh.twitterapp.data.model.PlaceOuterResponseModel
@@ -15,6 +16,7 @@ import com.ganesh.twitterapp.util.SheredPref
 
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 
@@ -44,38 +46,36 @@ open class TrendsListViewModel @Inject constructor() :
     @Inject
     lateinit var sheredPref: SheredPref
 
-    var authenticationData: MutableLiveData<AuthendicateModel> = MutableLiveData()
 
-    var locationLiveData: MutableLiveData<Location> = MutableLiveData()
+    var locationData: Location? = null
 
     var trendsLiveData: MutableLiveData<List<Trends>> = MutableLiveData()
 
-    var placeLiveData: MutableLiveData<PlaceOuterResponseModel> = MutableLiveData()
+    lateinit var placeData: PlaceOuterResponseModel
 
-    var tokenStatus: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun doAuthendicate(twitterToken: String): Boolean {
+    lateinit var locationProvideDisposel: Disposable
 
-        canShowLoading.value = true
+    fun doAuthendicate(): Boolean {
+
+        canShowLoading.postValue(true)
 
         clearAll()
 
         disposable.add(
-            apiRepo.doAuthendicate(twitterToken)
+            apiRepo.doAuthendicate(BuildConfig.API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<AuthendicateModel>() {
 
                     override fun onSuccess(value: AuthendicateModel?) {
 
-                        authenticationData.value = value
-                        tokenStatus.value = true
-                        canShowLoading.value = false
+                        setToken(value)
+                        initPlaceDetails()
+
                     }
 
                     override fun onError(e: Throwable?) {
-
-                        tokenStatus.value = false
                         handleEror(e)
                     }
                 })
@@ -87,7 +87,7 @@ open class TrendsListViewModel @Inject constructor() :
 
     fun getPlaceDetails(oAuthtoken: String, lat: String, lon: String) {
 
-        canShowLoading.value = true
+        canShowLoading.postValue(true)
         clearAll()
 
 
@@ -100,14 +100,17 @@ open class TrendsListViewModel @Inject constructor() :
                     override fun onSuccess(value: List<PlaceOuterResponseModel>?) {
 
                         if (value!!.isNotEmpty()) {
-                            placeLiveData.value = value[0]
-                            canShowLoading.value = false
+                            //placeLiveData.postValue(value[0])
+                            placeData = value[0]
+                            initTrendsDetails()
+
                         }
 
                     }
 
                     override fun onError(e: Throwable?) {
                         handleEror(e)
+
                     }
                 })
         )
@@ -116,7 +119,7 @@ open class TrendsListViewModel @Inject constructor() :
 
     fun getTrendsData(token: String, placeID: String) {
 
-        canShowLoading.value = true
+        canShowLoading.postValue(true)
         clearAll()
 
         disposable.add(
@@ -128,12 +131,13 @@ open class TrendsListViewModel @Inject constructor() :
                     override fun onSuccess(value: List<TrendsOuterResponseModel>?) {
                         print(value)
                         // successMessage(value)
-                        trendsLiveData.value = value!![0].trends
-                        canShowLoading.value = false
+                        trendsLiveData.postValue(value!![0].trends)
+                        canShowLoading.postValue(false)
                     }
 
                     override fun onError(e: Throwable?) {
                         handleEror(e)
+
                     }
                 })
         )
@@ -144,88 +148,101 @@ open class TrendsListViewModel @Inject constructor() :
     }
 
 
+    // whereever error occured, the error message need to be shown to the user and close the progress indicator
     fun handleEror(e: Throwable?) {
 
         if (e is UnknownHostException) {
 
             if (!connectivityVerifier.isNetworkConnected()) {
-                errorMessage.value = context.getString(R.string.inter_connection)
+                errorMessage.postValue(context.getString(R.string.inter_connection))
             }
 
         } else {
-            errorMessage.value = e!!.message ?: context.getString(R.string.unknown_error)
+            errorMessage.postValue(e!!.message ?: context.getString(R.string.unknown_error))
         }
 
-        canShowLoading.value = false
+        canShowLoading.postValue(false)
 
     }
 
-
-    // initilize  location service and authenticate service one by one
-    fun initService(): Boolean {
-
-        // find both location and authenticated
-        if (hasLocationFetched() && hasAuthenticated()) {
-            placeLiveData.value = placeLiveData.value
-            return false
-        }
-
-        // check location has got already
-        if (!hasLocationFetched()) {
-            fecthLocation()
-            return false
-        }
-
-        if (!hasAuthenticated()) {
-            tokenStatus.value = true
-            return false
-        }
-
-        return true
-    }
 
     // get user current location
     fun fecthLocation() {
         //setProgressEnum(ProgressEnum.MAIN_PROGRESS_BAR)
-        canShowLoading.value = true
+        canShowLoading.postValue(true)
 
         // onlocation received
-        locationProvider.getUpdatedLocation(locationRequest).subscribe { location ->
-            locationLiveData.value = location
-            //canShowLoading.setValue(false)
-        }
+        locationProvideDisposel =
+            locationProvider.getUpdatedLocation(locationRequest).subscribe { location ->
+
+                disposeLocationProvider()
+                initAuthenticatation(location)
+            }
+
+    }
+
+    // remove location update, once it gets a location
+    fun disposeLocationProvider() {
+        locationProvideDisposel.dispose()
+    }
+
+    // assign the location to locationData and call the place webservie
+    fun initAuthenticatation(location: Location) {
+        locationData = location
+        doAuthendicate()
     }
 
 
-    fun hasLocationFetched(): Boolean {
-
-        if (locationLiveData.value != null) {
-            return true
-        }
-
-        return false
-    }
-
-    fun hasAuthenticated(): Boolean {
-
-        if (sheredPref.getString(context.getString(R.string.token_key))!!.isNotEmpty()) {
-            return true
-        }
-
-        return false
-    }
-
+    // get tlken from shaered preference
     fun getTocken(): String? {
         return sheredPref.getString(context.getString(R.string.token_key))
     }
 
 
+    // store tokne inot shared prefernce
     fun setToken(value: AuthendicateModel?): Boolean {
+
         sheredPref.setString(
             context.getString(R.string.token_key),
             value!!.token_type + " " + value.access_token
         )
+
         return true
+    }
+
+
+    fun initTrendService() {
+
+        // to show progress indicator
+        canShowLoading.postValue(true)
+
+        // if location is not fecthced yet
+        if (locationData == null) {
+            fecthLocation()
+            return
+        }
+
+        // if authentication is not done yet
+        if (getTocken()!!.length == 0) {
+            doAuthendicate()
+            return
+        }
+
+        // if both location and authentication is done already, get place details from server
+        initPlaceDetails()
+
+
+    }
+
+    // call place web serice
+    fun initPlaceDetails() {
+        getPlaceDetails(getTocken()!!, "" + locationData!!.latitude, "" + locationData!!.longitude)
+    }
+
+
+    // call trends web service
+    fun initTrendsDetails() {
+        getTrendsData(getTocken()!!, "" + placeData.woeid)
     }
 
 

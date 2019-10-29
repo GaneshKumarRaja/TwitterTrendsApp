@@ -93,40 +93,11 @@ class MainActivity : AppCompatActivity() {
             txt_error.text = it
         })
 
-
-        viewModel.locationLiveData.observe(this, Observer {
-
-            if (viewModel.hasAuthenticated()) {
-                callPlaceDetailsWebservice()
-            } else {
-                viewModel.doAuthendicate(BuildConfig.API_KEY)
-            }
-
-        })
-
         viewModel.trendsLiveData.observe(this, Observer {
             setDataToRecuclerView(it)
         })
 
 
-        viewModel.placeLiveData.observe(this, Observer {
-            viewModel.getTrendsData(viewModel.getTocken()!!, "" + it.woeid)
-        })
-
-
-        viewModel.authenticationData.observe(this, Observer {
-            viewModel.setToken(it)
-            callPlaceDetailsWebservice()
-        })
-
-    }
-
-    private fun callPlaceDetailsWebservice() {
-        viewModel.getPlaceDetails(
-            viewModel.getTocken()!!,
-            "" + viewModel.locationLiveData.value!!.latitude,
-            "" + viewModel.locationLiveData.value!!.longitude
-        )
     }
 
 
@@ -136,14 +107,9 @@ class MainActivity : AppCompatActivity() {
 
             // GPS is turned on
             if (gpsEnableView.isEnabledGPS()) {
-                initAllService()
+                viewModel.initTrendService()
             }
         }
-    }
-
-
-    fun initAllService() {
-        viewModel.initService()
     }
 
 

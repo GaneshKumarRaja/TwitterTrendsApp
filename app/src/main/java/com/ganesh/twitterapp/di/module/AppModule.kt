@@ -34,7 +34,6 @@ class AppModule constructor(var app: Application) {
     @Singleton
     @Provides
     fun getConnectivityChecker(): ConnectivityVerifier {
-
         return ConnectivityVerifier(app.applicationContext)
     }
 

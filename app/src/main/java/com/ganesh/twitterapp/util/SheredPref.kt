@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class SheredPref @Inject constructor(
     private var pref: SharedPreferences,
-   private var editor: SharedPreferences.Editor
+    private var editor: SharedPreferences.Editor
 ) {
 
 

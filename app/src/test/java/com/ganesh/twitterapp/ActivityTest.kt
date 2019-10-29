@@ -53,19 +53,4 @@ class ActivityTest {
     }
 
 
-    @Test
-    fun `location and authenticaion once done, it should not invoke fectchlocation and doAuthenticate method`() {
-
-        `when`(viewModel.hasLocationFetched()).thenReturn(true)
-
-        `when`(viewModel.hasAuthenticated()).thenReturn(true)
-
-
-        main.initAllService()
-
-        verify(viewModel, times(0)).doAuthendicate("")
-
-    }
-
-
 }

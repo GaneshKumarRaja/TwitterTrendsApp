@@ -1,6 +1,8 @@
 package com.ganesh.twitterapp
 
 
+import android.content.Context
+import android.location.Location
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
@@ -12,15 +14,13 @@ import androidx.arch.core.executor.testing.*
 import com.ganesh.twitterapp.data.model.*
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
 import com.ganesh.twitterapp.data.repo.AppApiHelper
+import com.ganesh.twitterapp.util.SheredPref
 import io.reactivex.internal.schedulers.ExecutorScheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.Scheduler
-import org.junit.runner.RunWith
 import java.util.concurrent.Executor
 import org.mockito.Mockito.*
-import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.TimeUnit
-
 
 
 class TrendsViewModelTest {
@@ -38,6 +38,17 @@ class TrendsViewModelTest {
     private lateinit var spyViewModel: TrendsListViewModel
 
 
+    @Mock
+    lateinit var context: Context
+
+
+    @Mock
+    private lateinit var sheredPref: SheredPref
+
+
+    @Mock
+    lateinit var location: Location
+
     @Before
     fun initAll() {
 
@@ -49,23 +60,113 @@ class TrendsViewModelTest {
 
 
     @Test
-    fun `success case for autehntication web service calling`() {
+    fun `ensure authentication web service is called and fetchlocation() is called, when location is already feteched`() {
+
+        spyViewModel.locationData = location
+
+        location.longitude = 0.0
+
+        location.longitude = 0.0
+
+        `when`(context.getString(R.string.token_key)).thenReturn("token")
+
+        `when`(sheredPref.getString("token")).thenReturn("")
+
+        resuseable_Doauthtication_method()
+
+        resuseable_place_webservice_method()
+
+        resuseable_trends_webservice_method()
+
+        spyViewModel.initTrendService()
+
+        `verify`(spyViewModel, times(1)).doAuthendicate()
+
+
+        `verify`(spyViewModel, times(0)).fecthLocation()
+
+    }
+
+
+    @Test
+    fun `ensure place web service is called, when location and authentication is done already`() {
+
+        spyViewModel.locationData = location
+
+        location.longitude = 0.0
+
+        location.longitude = 0.0
+
+        `when`(context.getString(R.string.token_key)).thenReturn("token")
+
+        `when`(sheredPref.getString("token")).thenReturn("somevalue")
+
+        resuseable_Doauthtication_method()
+
+        resuseable_place_webservice_method()
+
+        resuseable_trends_webservice_method()
+
+        spyViewModel.initTrendService()
+
+        `verify`(spyViewModel, times(0)).doAuthendicate()
+
+
+        `verify`(spyViewModel, times(0)).fecthLocation()
+
+
+        `verify`(spyViewModel, times(1)).initPlaceDetails()
+
+
+    }
+
+
+    fun resuseable_Doauthtication_method() {
+
 
         val authModel = AuthendicateModel("sa", "a")
 
         val response: Single<AuthendicateModel>? = Single.just(authModel)
 
-        `when`(appApiHelper.doAuthendicate("XXXXXXX")).thenReturn(response)
-
-        spyViewModel.doAuthendicate("XXXXXXX")
-
-        assert(spyViewModel.tokenStatus.value == true)
-
-        assert(spyViewModel.canShowLoading.value == false)
-
-        assert(spyViewModel.errorMessage.value == null)
+        `when`(appApiHelper.doAuthendicate(BuildConfig.API_KEY)).thenReturn(response)
 
     }
+
+
+    fun resuseable_place_webservice_method() {
+
+        val x = mutableListOf(
+            PlaceOuterResponseModel(
+                "", "", "", 0,
+                PlaceOuterResponseModel.PlaceType(0, ""), "", 1
+            )
+        )
+
+        val response: Single<List<PlaceOuterResponseModel>>? = Single.just(x)
+
+        `when`(appApiHelper.getPcaeDetails(spyViewModel.getTocken()!!, "0.0", "0.0")).thenReturn(
+            response
+        )
+
+    }
+
+    fun resuseable_trends_webservice_method() {
+
+        val x = mutableListOf(Trends("", "", "", "", 0))
+
+        val lo = mutableListOf(Locations("", 1))
+
+        val data = mutableListOf(TrendsOuterResponseModel(x, "", "", lo))
+
+        val response: Single<List<TrendsOuterResponseModel>>? = Single.just(data)
+
+        `when`(appApiHelper.getTrends(spyViewModel.getTocken()!!, "1")).thenReturn(response)
+    }
+
+
+
+
+
 
     @Test
     fun `failure case for autehntication web service calling`() {
@@ -74,11 +175,11 @@ class TrendsViewModelTest {
 
         val response: Single<AuthendicateModel>? = Single.error(eror)
 
-        `when`(appApiHelper.doAuthendicate("XXXXXXX")).thenReturn(response)
+        `when`(appApiHelper.doAuthendicate(BuildConfig.API_KEY)).thenReturn(response)
 
-        spyViewModel.doAuthendicate("XXXXXXX")
+        spyViewModel.doAuthendicate()
 
-        assert(spyViewModel.tokenStatus.value == false)
+        // assert(spyViewModel.tokenStatus.value == false)
 
         assert(spyViewModel.canShowLoading.value == false)
 
@@ -130,29 +231,7 @@ class TrendsViewModelTest {
     }
 
 
-    @Test
-    fun `success case for fetching place details web service calling`() {
 
-        val x = mutableListOf(
-            PlaceOuterResponseModel(
-                "", "", "", 0,
-                PlaceOuterResponseModel.PlaceType(0, ""), "", 1
-            )
-        )
-
-        val response: Single<List<PlaceOuterResponseModel>>? = Single.just(x)
-
-        `when`(appApiHelper.getPcaeDetails("sd a", "", "")).thenReturn(response)
-
-        spyViewModel.getPlaceDetails("sd a", "", "")
-
-        assert(spyViewModel.placeLiveData.value != null)
-
-        assert(spyViewModel.canShowLoading.value == false)
-
-        assert(spyViewModel.errorMessage.value == null)
-
-    }
 
 
     @Test
@@ -166,7 +245,7 @@ class TrendsViewModelTest {
 
         spyViewModel.getPlaceDetails("sd a", "", "")
 
-        assert(spyViewModel.placeLiveData.value == null)
+        //  assert(spyViewModel.placeLiveData.value == null)
 
         assert(spyViewModel.canShowLoading.value == false)
 
