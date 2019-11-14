@@ -1,9 +1,9 @@
 package com.ganesh.twitterapp.di.module
 
 import android.app.Application
-import com.ganesh.twitterapp.R
+import android.content.Context
 import com.ganesh.twitterapp.util.ConnectivityVerifier
-import com.ganesh.twitterapp.util.SheredPref
+import com.ganesh.twitterapp.util.KeyValueHandler
 import com.google.android.gms.location.LocationRequest
 import dagger.Module
 import dagger.Provides
@@ -13,9 +13,17 @@ import javax.inject.Singleton
 @Module
 class AppModule constructor(var app: Application) {
 
+
     @Provides
     @Singleton
-    internal fun provideLocationRequest(): LocationRequest {
+    fun provideApp(): Context {
+        return app
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideLocationRequest(): LocationRequest {
 
         return LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
@@ -27,7 +35,7 @@ class AppModule constructor(var app: Application) {
 
     @Provides
     @Singleton
-    internal fun providerReactiveLocationProvider(): ReactiveLocationProvider {
+    fun providerReactiveLocationProvider(): ReactiveLocationProvider {
         return ReactiveLocationProvider(app)
     }
 
@@ -39,7 +47,7 @@ class AppModule constructor(var app: Application) {
 
     @Singleton
     @Provides
-    fun provideSharedPref(): SheredPref {
+    fun provideSharedPref(): KeyValueHandler {
 
         val pref = app.applicationContext.getApplicationContext().getSharedPreferences(
             "TwitterApp", 0
@@ -47,7 +55,7 @@ class AppModule constructor(var app: Application) {
 
         val editor = pref.edit()
 
-        return SheredPref(pref, editor)
+        return KeyValueHandler(pref, editor)
     }
 
 }

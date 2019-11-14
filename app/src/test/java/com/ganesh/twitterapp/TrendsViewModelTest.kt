@@ -14,7 +14,8 @@ import androidx.arch.core.executor.testing.*
 import com.ganesh.twitterapp.data.model.*
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
 import com.ganesh.twitterapp.data.repo.AppApiHelper
-import com.ganesh.twitterapp.util.SheredPref
+import com.ganesh.twitterapp.util.ConnectivityVerifier
+import com.ganesh.twitterapp.util.KeyValueHandler
 import io.reactivex.internal.schedulers.ExecutorScheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.Scheduler
@@ -43,11 +44,15 @@ class TrendsViewModelTest {
 
 
     @Mock
-    private lateinit var sheredPref: SheredPref
+    private lateinit var sheredPref: KeyValueHandler
 
 
     @Mock
     lateinit var location: Location
+
+
+    @Mock
+    lateinit var connectivityVerifier: ConnectivityVerifier
 
     @Before
     fun initAll() {
@@ -164,10 +169,6 @@ class TrendsViewModelTest {
     }
 
 
-
-
-
-
     @Test
     fun `failure case for autehntication web service calling`() {
 
@@ -218,7 +219,10 @@ class TrendsViewModelTest {
 
         val response: Single<List<TrendsOuterResponseModel>>? = Single.error(eror)
 
+
         `when`(appApiHelper.getTrends("sd a", "1")).thenReturn(response)
+
+
 
         spyViewModel.getTrendsData("sd a", "1")
 
@@ -228,10 +232,8 @@ class TrendsViewModelTest {
 
         assert(spyViewModel.errorMessage.value != null)
 
+
     }
-
-
-
 
 
     @Test
@@ -252,6 +254,8 @@ class TrendsViewModelTest {
         assert(spyViewModel.errorMessage.value != null)
 
     }
+
+
 
 
     @Before

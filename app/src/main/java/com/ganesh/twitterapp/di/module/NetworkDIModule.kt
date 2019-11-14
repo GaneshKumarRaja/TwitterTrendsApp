@@ -66,10 +66,10 @@ class NetworkDIModule {
 
     @Singleton
     @Provides
-    open fun getHelper(): APIHelper {
-        createHttpClient()
-        provideRetrofit(clit)
-        return AppApiHelper(inter)
+    open fun getHelper(helper:APIInterface): APIHelper {
+        //createHttpClient()
+       // provideRetrofit(clit)
+        return AppApiHelper(helper)
     }
 
 

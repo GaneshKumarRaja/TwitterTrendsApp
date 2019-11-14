@@ -8,16 +8,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ganesh.twitterapp.adapter.TrendsAdapter
 import com.ganesh.twitterapp.data.model.Trends
-import com.ganesh.twitterapp.di.module.ActivityModule
 import com.ganesh.twitterapp.util.EnableGPS
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
 import com.ganesh.twitterapp.di.DaggerViewModelFactory
-import com.ganesh.twitterapp.di.component.DaggerAppComponent
-import com.ganesh.twitterapp.di.module.AppModule
-
-import com.ganesh.twitterapp.di.module.NetworkDIModule
+import com.ganesh.twitterapp.di.component.DaggerActivityComponent
+import com.ganesh.twitterapp.di.module.ActivityModule
 import kotlinx.android.synthetic.main.activity_main.*
-
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -55,11 +51,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initDagger() {
-        DaggerAppComponent.builder()
-            .appModule(AppModule(application))
-            .activityModule(ActivityModule(this))
-            .networkDIModule(NetworkDIModule())
-            .build().inject(this)
+        var appcom = (application as TwitterApplication).appComponent
+
+        DaggerActivityComponent.builder().appComponent(appcom)
+            .activityModule(ActivityModule(this)).build().inject(this)
+
     }
 
 

@@ -1,18 +1,17 @@
 package com.ganesh.twitterapp.view_model
 
 
-import android.content.Context
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.ganesh.twitterapp.BuildConfig
-import com.ganesh.twitterapp.R
 import com.ganesh.twitterapp.data.model.AuthendicateModel
 import com.ganesh.twitterapp.data.model.PlaceOuterResponseModel
 import com.ganesh.twitterapp.data.model.Trends
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
 import com.ganesh.twitterapp.util.ConnectivityVerifier
 import com.ganesh.twitterapp.data.repo.APIHelper
-import com.ganesh.twitterapp.util.SheredPref
+import com.ganesh.twitterapp.util.GlobalString
+import com.ganesh.twitterapp.util.KeyValueHandler
 
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,27 +23,14 @@ import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-open class TrendsListViewModel @Inject constructor() :
+open class TrendsListViewModel @Inject constructor(
+    private var apiRepo: APIHelper,
+    private var connectivityVerifier: ConnectivityVerifier,
+    private var locationRequest: LocationRequest,
+    private var locationProvider: ReactiveLocationProvider,
+    private var sheredPref: KeyValueHandler
+) :
     BaseViewModel() {
-
-
-    @Inject
-    lateinit var context: Context
-
-    @Inject
-    lateinit var locationProvider: ReactiveLocationProvider
-
-    @Inject
-    lateinit var locationRequest: LocationRequest
-
-    @Inject
-    lateinit var connectivityVerifier: ConnectivityVerifier
-
-    @Inject
-    lateinit var apiRepo: APIHelper
-
-    @Inject
-    lateinit var sheredPref: SheredPref
 
 
     var locationData: Location? = null
@@ -54,7 +40,7 @@ open class TrendsListViewModel @Inject constructor() :
     lateinit var placeData: PlaceOuterResponseModel
 
 
-    lateinit var locationProvideDisposel: Disposable
+    private lateinit var locationProvideDisposel: Disposable
 
     fun doAuthendicate(): Boolean {
 
@@ -69,15 +55,11 @@ open class TrendsListViewModel @Inject constructor() :
                 .subscribeWith(object : DisposableSingleObserver<AuthendicateModel>() {
 
                     override fun onSuccess(value: AuthendicateModel?) {
-
                         setToken(value)
                         initPlaceDetails()
-
                     }
 
-                    override fun onError(e: Throwable?) {
-                        handleEror(e)
-                    }
+                    override fun onError(e: Throwable?) = this@TrendsListViewModel.handleEror(e)
                 })
         )
 
@@ -108,10 +90,7 @@ open class TrendsListViewModel @Inject constructor() :
 
                     }
 
-                    override fun onError(e: Throwable?) {
-                        handleEror(e)
-
-                    }
+                    override fun onError(e: Throwable?) = this@TrendsListViewModel.handleEror(e)
                 })
         )
     }
@@ -151,14 +130,14 @@ open class TrendsListViewModel @Inject constructor() :
     // whereever error occured, the error message need to be shown to the user and close the progress indicator
     fun handleEror(e: Throwable?) {
 
-        if (e is UnknownHostException) {
+        if (e == UnknownHostException()) {
 
             if (!connectivityVerifier.isNetworkConnected()) {
-                errorMessage.postValue(context.getString(R.string.inter_connection))
+                errorMessage.postValue(GlobalString.noInternetConnection)
             }
 
         } else {
-            errorMessage.postValue(e!!.message ?: context.getString(R.string.unknown_error))
+            errorMessage.postValue(e!!.message ?: GlobalString.unknownError)
         }
 
         canShowLoading.postValue(false)
@@ -174,7 +153,6 @@ open class TrendsListViewModel @Inject constructor() :
         // onlocation received
         locationProvideDisposel =
             locationProvider.getUpdatedLocation(locationRequest).subscribe { location ->
-
                 disposeLocationProvider()
                 initAuthenticatation(location)
             }
@@ -182,28 +160,25 @@ open class TrendsListViewModel @Inject constructor() :
     }
 
     // remove location update, once it gets a location
-    fun disposeLocationProvider() {
-        locationProvideDisposel.dispose()
+    private fun disposeLocationProvider() {
+        this.locationProvideDisposel.dispose()
     }
 
     // assign the location to locationData and call the place webservie
-    fun initAuthenticatation(location: Location) {
+    private fun initAuthenticatation(location: Location) {
         locationData = location
         doAuthendicate()
     }
 
 
-    // get tlken from shaered preference
-    fun getTocken(): String? {
-        return sheredPref.getString(context.getString(R.string.token_key))
-    }
+    /* get tlken from sheared preference */
+    fun getTocken(): String? = sheredPref.getToken()
 
 
     // store tokne inot shared prefernce
     fun setToken(value: AuthendicateModel?): Boolean {
 
-        sheredPref.setString(
-            context.getString(R.string.token_key),
+        sheredPref.setToken(
             value!!.token_type + " " + value.access_token
         )
 
@@ -223,7 +198,7 @@ open class TrendsListViewModel @Inject constructor() :
         }
 
         // if authentication is not done yet
-        if (getTocken()!!.length == 0) {
+        if (getTocken()!!.isEmpty()) {
             doAuthendicate()
             return
         }
