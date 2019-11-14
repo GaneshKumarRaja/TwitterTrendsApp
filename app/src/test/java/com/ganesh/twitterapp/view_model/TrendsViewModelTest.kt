@@ -1,7 +1,6 @@
-package com.ganesh.twitterapp
+package com.ganesh.twitterapp.view_model
 
 
-import android.content.Context
 import android.location.Location
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
@@ -11,16 +10,18 @@ import org.junit.Before
 import org.junit.Rule
 import org.mockito.*
 import androidx.arch.core.executor.testing.*
+import com.ganesh.twitterapp.BuildConfig
 import com.ganesh.twitterapp.data.model.*
-import com.ganesh.twitterapp.view_model.TrendsListViewModel
 import com.ganesh.twitterapp.data.repo.AppApiHelper
 import com.ganesh.twitterapp.util.ConnectivityVerifier
 import com.ganesh.twitterapp.util.KeyValueHandler
+import com.google.android.gms.location.LocationRequest
 import io.reactivex.internal.schedulers.ExecutorScheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.Scheduler
 import java.util.concurrent.Executor
 import org.mockito.Mockito.*
+import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import java.util.concurrent.TimeUnit
 
 
@@ -32,32 +33,38 @@ class TrendsViewModelTest {
     @Mock
     private lateinit var appApiHelper: AppApiHelper
 
-
-    @InjectMocks
-    private var rateListViewModel: TrendsListViewModel = TrendsListViewModel()
-
-    private lateinit var spyViewModel: TrendsListViewModel
-
-
-    @Mock
-    lateinit var context: Context
-
-
     @Mock
     private lateinit var sheredPref: KeyValueHandler
 
+    @Mock
+    lateinit var locationProvider: ReactiveLocationProvider
+
+    @Mock
+    lateinit var locationRequest: LocationRequest
 
     @Mock
     lateinit var location: Location
 
-
     @Mock
     lateinit var connectivityVerifier: ConnectivityVerifier
+
+
+    @InjectMocks
+    private lateinit var rateListViewModel: TrendsListViewModel
+
+    private lateinit var spyViewModel: TrendsListViewModel
+
 
     @Before
     fun initAll() {
 
         MockitoAnnotations.initMocks(this)
+
+        rateListViewModel = TrendsListViewModel(
+            appApiHelper, connectivityVerifier, locationRequest, locationProvider, sheredPref
+
+        )
+        spyViewModel = spy(rateListViewModel)
 
         spyViewModel = spy(rateListViewModel)
 
@@ -73,9 +80,9 @@ class TrendsViewModelTest {
 
         location.longitude = 0.0
 
-        `when`(context.getString(R.string.token_key)).thenReturn("token")
+        //`when`(context.getString(R.string.token_key)).thenReturn("token")
 
-        `when`(sheredPref.getString("token")).thenReturn("")
+        `when`(sheredPref.getToken()).thenReturn("")
 
         resuseable_Doauthtication_method()
 
@@ -85,10 +92,10 @@ class TrendsViewModelTest {
 
         spyViewModel.initTrendService()
 
-        `verify`(spyViewModel, times(1)).doAuthendicate()
+        verify(spyViewModel, times(1)).doAuthendicate()
 
 
-        `verify`(spyViewModel, times(0)).fecthLocation()
+        verify(spyViewModel, times(0)).fecthLocation()
 
     }
 
@@ -102,9 +109,9 @@ class TrendsViewModelTest {
 
         location.longitude = 0.0
 
-        `when`(context.getString(R.string.token_key)).thenReturn("token")
+        //`when`(context.getString(R.string.token_key)).thenReturn("token")
 
-        `when`(sheredPref.getString("token")).thenReturn("somevalue")
+        `when`(sheredPref.getToken()).thenReturn("token")
 
         resuseable_Doauthtication_method()
 
@@ -114,19 +121,19 @@ class TrendsViewModelTest {
 
         spyViewModel.initTrendService()
 
-        `verify`(spyViewModel, times(0)).doAuthendicate()
+        verify(spyViewModel, times(0)).doAuthendicate()
 
 
-        `verify`(spyViewModel, times(0)).fecthLocation()
+        verify(spyViewModel, times(0)).fecthLocation()
 
 
-        `verify`(spyViewModel, times(1)).initPlaceDetails()
+        verify(spyViewModel, times(1)).initPlaceDetails()
 
 
     }
 
 
-    fun resuseable_Doauthtication_method() {
+    private fun resuseable_Doauthtication_method() {
 
 
         val authModel = AuthendicateModel("sa", "a")
@@ -138,7 +145,7 @@ class TrendsViewModelTest {
     }
 
 
-    fun resuseable_place_webservice_method() {
+    private fun resuseable_place_webservice_method() {
 
         val x = mutableListOf(
             PlaceOuterResponseModel(
@@ -155,7 +162,7 @@ class TrendsViewModelTest {
 
     }
 
-    fun resuseable_trends_webservice_method() {
+    private fun resuseable_trends_webservice_method() {
 
         val x = mutableListOf(Trends("", "", "", "", 0))
 
@@ -254,8 +261,6 @@ class TrendsViewModelTest {
         assert(spyViewModel.errorMessage.value != null)
 
     }
-
-
 
 
     @Before

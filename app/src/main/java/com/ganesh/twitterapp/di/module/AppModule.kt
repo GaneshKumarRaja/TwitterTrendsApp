@@ -49,7 +49,7 @@ class AppModule constructor(var app: Application) {
     @Provides
     fun provideSharedPref(): KeyValueHandler {
 
-        val pref = app.applicationContext.getApplicationContext().getSharedPreferences(
+        val pref = app.applicationContext.applicationContext.getSharedPreferences(
             "TwitterApp", 0
         )
 

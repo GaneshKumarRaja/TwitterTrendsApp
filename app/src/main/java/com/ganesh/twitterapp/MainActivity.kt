@@ -10,7 +10,7 @@ import com.ganesh.twitterapp.adapter.TrendsAdapter
 import com.ganesh.twitterapp.data.model.Trends
 import com.ganesh.twitterapp.util.EnableGPS
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
-import com.ganesh.twitterapp.di.DaggerViewModelFactory
+
 import com.ganesh.twitterapp.di.component.DaggerActivityComponent
 import com.ganesh.twitterapp.di.module.ActivityModule
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,8 +22,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var gpsEnableView: EnableGPS
 
-    @Inject
-    lateinit var viewModelFactory: DaggerViewModelFactory
 
     @Inject
     lateinit var viewModel: TrendsListViewModel
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initDagger() {
-        var appcom = (application as TwitterApplication).appComponent
+        val appcom = (application as TwitterApplication).appComponent
 
         DaggerActivityComponent.builder().appComponent(appcom)
             .activityModule(ActivityModule(this)).build().inject(this)

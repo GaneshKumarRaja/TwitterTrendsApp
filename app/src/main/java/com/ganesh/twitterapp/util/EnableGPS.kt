@@ -7,19 +7,20 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.*
 import javax.inject.Inject
 
 
-open class EnableGPS public @Inject constructor(var activity: Activity, var gpsDialog: GPSDialog) {
+@Suppress("DEPRECATED_IDENTITY_EQUALS")
+open class EnableGPS @Inject  constructor(private var activity: Activity, private var gpsDialog: GPSDialog) {
 
 
-    private val REQUEST_LOCATION_PERMISSION = 1
+    private val requestLocationUpdate = 1
 
 
-    internal fun hasGPSPermission(): Boolean {
+     fun hasGPSPermission(): Boolean {
 
-        if (ContextCompat.checkSelfPermission(
+        if (checkSelfPermission(
                 activity.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) !== PackageManager.PERMISSION_GRANTED
@@ -29,7 +30,7 @@ open class EnableGPS public @Inject constructor(var activity: Activity, var gpsD
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
+                requestLocationUpdate
             )
 
             return false
@@ -49,7 +50,7 @@ open class EnableGPS public @Inject constructor(var activity: Activity, var gpsD
 
         // Check if enabled and if not send user to the GPS settings
         if (!enabled) {
-            enableGpS()
+            show()
             return false
         }
 
@@ -57,7 +58,7 @@ open class EnableGPS public @Inject constructor(var activity: Activity, var gpsD
     }
 
 
-    fun enableGpS() {
+    private fun show() {
         gpsDialog.showDialog()
     }
 
