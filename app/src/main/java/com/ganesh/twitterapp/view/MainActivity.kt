@@ -1,4 +1,4 @@
-package com.ganesh.twitterapp
+package com.ganesh.twitterapp.view
 
 
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ganesh.twitterapp.adapter.TrendsAdapter
+import com.ganesh.twitterapp.R
+import com.ganesh.twitterapp.TwitterApplication
 import com.ganesh.twitterapp.data.model.Trends
 import com.ganesh.twitterapp.util.EnableGPS
 import com.ganesh.twitterapp.view_model.TrendsListViewModel
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
             // GPS is turned on
             if (gpsEnableView.isEnabledGPS()) {
-                viewModel.initTrendService()
+                viewModel.init()
             }
         }
     }

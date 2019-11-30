@@ -1,4 +1,4 @@
-package com.ganesh.twitterapp.adapter
+package com.ganesh.twitterapp.view
 
 
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.ganesh.twitterapp.R
-import com.ganesh.twitterapp.adapter.TrendsAdapter.*
+import com.ganesh.twitterapp.view.TrendsAdapter.*
 import com.ganesh.twitterapp.data.model.Trends
 import kotlinx.android.synthetic.main.trends_adapter_layout.view.*
 import javax.inject.Inject

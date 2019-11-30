@@ -3,7 +3,10 @@ package com.ganesh.twitterapp.di.module
 import android.app.Application
 import android.content.Context
 import com.ganesh.twitterapp.util.ConnectivityVerifier
-import com.ganesh.twitterapp.util.KeyValueHandler
+import com.ganesh.twitterapp.data.remote.KeyValueHandler
+import com.ganesh.twitterapp.data.repo.APIHelper
+import com.ganesh.twitterapp.domain.TrendsInteractor
+import com.ganesh.twitterapp.domain.TrendsUsecases
 import com.google.android.gms.location.LocationRequest
 import dagger.Module
 import dagger.Provides
@@ -20,16 +23,19 @@ class AppModule constructor(var app: Application) {
         return app
     }
 
-
     @Provides
     @Singleton
     fun provideLocationRequest(): LocationRequest {
-
         return LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             .setNumUpdates(1)
             .setInterval(1)
+    }
 
+    @Provides
+    @Singleton
+    fun providerTrendsInteractor(apiHelper: APIHelper, handler: KeyValueHandler): TrendsUsecases {
+        return TrendsInteractor(apiHelper, handler)
     }
 
 

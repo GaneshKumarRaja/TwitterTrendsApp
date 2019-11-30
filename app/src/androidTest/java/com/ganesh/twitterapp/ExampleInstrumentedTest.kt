@@ -10,7 +10,7 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 
 import androidx.test.rule.ActivityTestRule
-
+import com.ganesh.twitterapp.view.MainActivity
 
 
 /**

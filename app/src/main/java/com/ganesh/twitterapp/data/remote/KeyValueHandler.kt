@@ -1,4 +1,4 @@
-package com.ganesh.twitterapp.util
+package com.ganesh.twitterapp.data.remote
 
 
 import android.content.SharedPreferences
@@ -11,23 +11,14 @@ class KeyValueHandler @Inject constructor(
     private var editor: SharedPreferences.Editor
 ) {
 
-
-//    fun setString(key: String, toekn: String) {
-//        editor.putString(key, toekn)
-//        editor.commit()
-//    }
-
-
-
-    fun getToken() :String?{
+    fun getToken(): String? {
         return pref.getString(TOKEN, "")
     }
 
 
-    fun setToken(token:String){
+    fun setToken(token: String) {
         editor.putString(TOKEN, token)
         editor.commit()
     }
-
 
 }
