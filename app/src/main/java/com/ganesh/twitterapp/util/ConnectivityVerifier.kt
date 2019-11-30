@@ -7,7 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 
 
-class ConnectivityVerifier @Inject constructor(var context: Context) {
+class ConnectivityVerifier @Inject constructor(private var context: Context) {
 
 
     @Suppress("DEPRECATION")

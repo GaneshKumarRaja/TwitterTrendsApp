@@ -1,7 +1,7 @@
 package com.ganesh.twitterapp.di
 
 import androidx.lifecycle.ViewModelProvider
-import com.ganesh.twitterapp.di.DaggerViewModelFactory
+
 import dagger.Binds
 import dagger.Module
 

@@ -21,8 +21,8 @@ import javax.inject.Singleton
 @Module
 class NetworkDIModule {
 
-    lateinit var inter: APIInterface
-    lateinit var clit: OkHttpClient
+    private lateinit var inter: APIInterface
+   private lateinit var clit: OkHttpClient
 
 
 
@@ -67,8 +67,6 @@ class NetworkDIModule {
     @Singleton
     @Provides
     open fun getHelper(helper:APIInterface): APIHelper {
-        //createHttpClient()
-       // provideRetrofit(clit)
         return AppApiHelper(helper)
     }
 

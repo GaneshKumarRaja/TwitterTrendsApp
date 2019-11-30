@@ -4,7 +4,7 @@ import android.app.Application
 import com.ganesh.twitterapp.di.component.AppComponent
 import com.ganesh.twitterapp.di.component.DaggerAppComponent
 import com.ganesh.twitterapp.di.module.AppModule
-import com.ganesh.twitterapp.di.module.NetworkDIModule
+
 
 
 class TwitterApplication : Application() {
@@ -16,7 +16,7 @@ class TwitterApplication : Application() {
         initDagger()
     }
 
-    fun initDagger() {
+    private fun initDagger() {
         appComponent = DaggerAppComponent
             .builder()
             .appModule(AppModule(this))

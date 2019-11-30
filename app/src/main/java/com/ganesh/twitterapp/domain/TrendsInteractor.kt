@@ -3,7 +3,7 @@ package com.ganesh.twitterapp.domain
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
 import com.ganesh.twitterapp.data.repo.KeyValueHandler
 import com.ganesh.twitterapp.data.repo.APIHelper
-import com.ganesh.twitterapp.util.ConnectivityVerifier
+
 import io.reactivex.Single
 import javax.inject.Inject
 

@@ -4,7 +4,7 @@ package com.ganesh.twitterapp.data.remote
 import com.ganesh.twitterapp.data.model.AuthendicateModel
 import com.ganesh.twitterapp.data.model.PlaceOuterResponseModel
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
-import io.reactivex.Observable
+
 import io.reactivex.Single
 import retrofit2.http.*
 

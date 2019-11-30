@@ -6,9 +6,7 @@ import com.ganesh.twitterapp.data.model.AuthendicateModel
 import com.ganesh.twitterapp.data.model.PlaceOuterResponseModel
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
 import com.ganesh.twitterapp.data.remote.APIInterface
-import com.ganesh.twitterapp.data.repo.APIHelper
-import com.ganesh.twitterapp.util.ConnectivityVerifier
-import io.reactivex.Observable
+
 
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,7 +14,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 open class AppApiHelper @Inject constructor(
-    var api: APIInterface
+    private var api: APIInterface
 ) : APIHelper {
 
 
