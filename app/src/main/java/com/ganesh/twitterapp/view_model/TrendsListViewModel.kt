@@ -5,8 +5,6 @@ import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import com.ganesh.twitterapp.data.model.Trends
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
-import com.ganesh.twitterapp.util.ConnectivityVerifier
-import com.ganesh.twitterapp.data.remote.KeyValueHandler
 import com.ganesh.twitterapp.domain.TrendsUsecases
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.disposables.Disposable
@@ -22,16 +20,14 @@ open class TrendsListViewModel @Inject constructor(
     BaseViewModel() {
 
 
-    var locationData: Location? = null
-
-    var str: String? = null
+    private var locationData: Location? = null
 
     var trendsLiveData: MutableLiveData<List<Trends>> = MutableLiveData()
 
     private lateinit var locationProvideDisposel: Disposable
 
-    var lattitude: String =""
-    var longitude: String=""
+    private var lattitude: String =""
+    private var longitude: String=""
 
     fun init() {
 
@@ -39,28 +35,23 @@ open class TrendsListViewModel @Inject constructor(
         canShowLoading.postValue(true)
 
         // if location is not fecthced yet
-
-
         if (locationData == null) {
             fecthLocation()
             return
         }
-
-
     }
 
-    fun setLocation() {
+    private fun setLocation() {
         lattitude = locationData?.latitude.toString()
         longitude = locationData?.longitude.toString()
     }
 
     /**
-     *  calling smartrecruiters.com web service
+     *  get Trends
      */
     fun getTrends(): Boolean {
 
         canShowLoading.value = true
-
 
         disposable.add(
             trendsUsecases.getTrends(lattitude, longitude)
@@ -94,7 +85,6 @@ open class TrendsListViewModel @Inject constructor(
                 locationData = location
                 setLocation()
                 getTrends()
-                //initAuthenticatation(location)
             }
 
     }
@@ -104,8 +94,7 @@ open class TrendsListViewModel @Inject constructor(
         this.locationProvideDisposel.dispose()
     }
 
-//    /* get tlken from sheared preference */
-//    fun getTocken(): String? = sheredPref.getToken()
+
 
 
 }

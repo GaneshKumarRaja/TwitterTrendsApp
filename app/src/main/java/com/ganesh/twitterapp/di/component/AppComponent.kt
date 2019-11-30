@@ -4,8 +4,7 @@ import android.content.Context
 import com.ganesh.twitterapp.data.repo.APIHelper
 import com.ganesh.twitterapp.di.module.AppModule
 import com.ganesh.twitterapp.di.module.NetworkDIModule
-import com.ganesh.twitterapp.data.remote.KeyValueHandler
-import com.ganesh.twitterapp.domain.TrendsUsecases
+import com.ganesh.twitterapp.data.persistence.KeyValueHandler
 import com.google.android.gms.location.LocationRequest
 import dagger.Component
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider

@@ -1,17 +1,15 @@
 package com.ganesh.twitterapp.di.module
 
 import android.app.Activity
-import com.ganesh.twitterapp.data.remote.KeyValueHandler
+import com.ganesh.twitterapp.data.persistence.KeyValueHandler
 import com.ganesh.twitterapp.data.repo.APIHelper
 import com.ganesh.twitterapp.di.ActivityScope
-import com.ganesh.twitterapp.di.component.ActivityComponent
 import com.ganesh.twitterapp.domain.TrendsInteractor
 import com.ganesh.twitterapp.domain.TrendsUsecases
 import com.ganesh.twitterapp.util.EnableGPS
 import com.ganesh.twitterapp.util.GPSDialog
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class ActivityModule constructor(var activity: Activity) {

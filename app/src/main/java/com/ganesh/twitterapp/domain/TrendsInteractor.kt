@@ -1,7 +1,7 @@
 package com.ganesh.twitterapp.domain
 
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
-import com.ganesh.twitterapp.data.remote.KeyValueHandler
+import com.ganesh.twitterapp.data.persistence.KeyValueHandler
 import com.ganesh.twitterapp.data.repo.APIHelper
 import io.reactivex.Single
 import javax.inject.Inject
@@ -13,7 +13,7 @@ class TrendsInteractor @Inject constructor(
 
     override fun getTrends(lat: String, lon: String): Single<List<TrendsOuterResponseModel>> {
         var key: String
-               // 1. get key
+        // 1. get key
         return getKey()
             .flatMap { authKey ->
                 key = authKey
@@ -40,8 +40,11 @@ class TrendsInteractor @Inject constructor(
             // get the key from server
             api.doAuthenticate().map {
                 keyDetails = it!!.token_type + " " + it.access_token
+                //store the key in local
+                keyHandler.setToken(keyDetails!!)
             }
         }
+
         // return the key
         return Single.just(keyDetails)
 
