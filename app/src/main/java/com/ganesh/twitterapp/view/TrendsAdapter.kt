@@ -21,7 +21,6 @@ class TrendsAdapter @Inject constructor() : RecyclerView.Adapter<TrendsHolder>()
         this.data = data
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrendsHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.trends_adapter_layout, parent, false)
@@ -40,17 +39,11 @@ class TrendsAdapter @Inject constructor() : RecyclerView.Adapter<TrendsHolder>()
         holder.query.text = model.query
     }
 
-
     class TrendsHolder(@NonNull itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         var name: TextView = itemView.txt_name
         var volume: TextView = itemView.txt_volume
         var url: TextView = itemView.txt_url
         var query: TextView = itemView.txt_query
-
-
     }
-
-
 }
 

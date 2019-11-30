@@ -19,17 +19,14 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-
     @Inject
     lateinit var gpsEnableView: EnableGPS
-
 
     @Inject
     lateinit var viewModel: TrendsListViewModel
 
     @Inject
     lateinit var trendsAdapter: TrendsAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +36,13 @@ class MainActivity : AppCompatActivity() {
         initViewModel()
     }
 
-
     override fun onResume() {
         super.onResume()
         setGpsEnableView()
     }
 
     private fun initViewModel() {
-        observableViewModel()
+        setUpobservableViewModel()
     }
 
     private fun initDagger() {
@@ -57,21 +53,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun initRecycreView() {
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = trendsAdapter
     }
 
-
     private fun setDataToRecuclerView(data: List<Trends>) {
         trendsAdapter.setData(data)
         trendsAdapter.notifyDataSetChanged()
     }
 
-
-    private fun observableViewModel() {
+    private fun setUpobservableViewModel() {
 
         viewModel.canShowLoading.observe(this, Observer {
 
@@ -94,7 +87,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
 
     fun setGpsEnableView() {
         // verify user has enabled GPS permission in app setting

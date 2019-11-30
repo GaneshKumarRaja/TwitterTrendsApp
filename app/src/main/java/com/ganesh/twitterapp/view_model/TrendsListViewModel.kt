@@ -15,22 +15,15 @@ open class TrendsListViewModel @Inject constructor(
     private var trendsUsecases: TrendsUsecases,
     private var locationRequest: LocationRequest,
     private var locationProvider: ReactiveLocationProvider
-
-) :
-    BaseViewModel() {
-
+) : BaseViewModel() {
 
     private var locationData: Location? = null
-
     var trendsLiveData: MutableLiveData<List<Trends>> = MutableLiveData()
-
     private lateinit var locationProvideDisposel: Disposable
-
     private var lattitude: String = ""
     private var longitude: String = ""
 
     fun init() {
-
         // to show progress indicator
         canShowLoading.postValue(true)
 
@@ -41,16 +34,10 @@ open class TrendsListViewModel @Inject constructor(
         }
     }
 
-    private fun setLocation() {
-        lattitude = locationData?.latitude.toString()
-        longitude = locationData?.longitude.toString()
-    }
-
     /**
      *  get Trends
      */
     fun getTrends(): Boolean {
-
         canShowLoading.value = true
 
         disposable.add(
@@ -92,6 +79,11 @@ open class TrendsListViewModel @Inject constructor(
     // remove location update, once it gets a location
     private fun disposeLocationProvider() {
         this.locationProvideDisposel.dispose()
+    }
+
+    private fun setLocation() {
+        lattitude = locationData?.latitude.toString()
+        longitude = locationData?.longitude.toString()
     }
 
 
