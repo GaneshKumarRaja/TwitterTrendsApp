@@ -3,7 +3,7 @@ package com.ganesh.twitterapp.di.module
 import android.app.Application
 import android.content.Context
 import com.ganesh.twitterapp.util.ConnectivityVerifier
-import com.ganesh.twitterapp.data.persistence.KeyValueHandler
+import com.ganesh.twitterapp.data.repo.KeyValueHandler
 import com.ganesh.twitterapp.data.repo.APIHelper
 import com.ganesh.twitterapp.domain.TrendsInteractor
 import com.ganesh.twitterapp.domain.TrendsUsecases

@@ -7,6 +7,7 @@ import com.ganesh.twitterapp.data.model.PlaceOuterResponseModel
 import com.ganesh.twitterapp.data.model.TrendsOuterResponseModel
 import com.ganesh.twitterapp.data.remote.APIInterface
 import com.ganesh.twitterapp.data.repo.APIHelper
+import com.ganesh.twitterapp.util.ConnectivityVerifier
 import io.reactivex.Observable
 
 import io.reactivex.Single

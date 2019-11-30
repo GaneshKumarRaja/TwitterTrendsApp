@@ -1,4 +1,4 @@
-package com.ganesh.twitterapp.data.persistence
+package com.ganesh.twitterapp.data.repo
 
 
 import android.content.SharedPreferences

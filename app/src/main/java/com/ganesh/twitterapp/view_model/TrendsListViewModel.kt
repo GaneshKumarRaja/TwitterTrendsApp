@@ -26,8 +26,8 @@ open class TrendsListViewModel @Inject constructor(
 
     private lateinit var locationProvideDisposel: Disposable
 
-    private var lattitude: String =""
-    private var longitude: String=""
+    private var lattitude: String = ""
+    private var longitude: String = ""
 
     fun init() {
 
@@ -62,12 +62,12 @@ open class TrendsListViewModel @Inject constructor(
     }
 
 
-     fun onSuccess(res: List<TrendsOuterResponseModel>?) {
+    fun onSuccess(res: List<TrendsOuterResponseModel>?) {
         trendsLiveData.postValue(res!![0].trends)
         canShowLoading.postValue(false)
     }
 
-     fun onFailure(e: Throwable) {
+    fun onFailure(e: Throwable) {
         errorMessage.value = e.message
         canShowLoading.postValue(false)
     }
@@ -93,8 +93,6 @@ open class TrendsListViewModel @Inject constructor(
     private fun disposeLocationProvider() {
         this.locationProvideDisposel.dispose()
     }
-
-
 
 
 }
